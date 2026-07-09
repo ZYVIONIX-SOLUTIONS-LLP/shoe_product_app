@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
   final PageController _bannerController = PageController();
   int _bannerIndex = 0;
-  int _selectedCategory = 1;
+  int _selectedCategory = 0;
   Timer? _bannerTimer;
 
   final List<String> _banners = const [
@@ -29,6 +29,10 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   final List<_Category> _categories = const [
+    _Category(
+      'All',
+      'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=200&q=80',
+    ),
     _Category(
       'Sneakers',
       'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=200&q=80',
@@ -47,60 +51,97 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
     _Category(
       'Lifestyle',
-      'https://images.unsplash.com/photo-1608379743498-ce5c5b6e29f2?w=200&q=80',
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpzrPNErvKgvwLVcSh4P0gz2ELJNe-9pU9nd6L2VHiRmxegENVZ15hSpcq&s=10',
     ),
   ];
 
-  final List<_Product> _products = const [
-    _Product(
-      name: 'Sports Footwear',
-      price: 120,
-      rating: 4.9,
-      reviews: 450,
-      image:
-          'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80',
-    ),
-    _Product(
-      name: 'Sports Footwear',
-      price: 120,
-      rating: 4.9,
-      reviews: 450,
-      image:
-          'https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=500&q=80',
-    ),
-    _Product(
-      name: 'Running Shoes',
-      price: 145,
-      rating: 4.8,
-      reviews: 320,
-      image:
-          'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&q=80',
-    ),
-    _Product(
-      name: 'Classic Sneakers',
-      price: 99,
-      rating: 4.7,
-      reviews: 210,
-      image:
-          'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=500&q=80',
-    ),
-    _Product(
-      name: 'Trail Runners',
-      price: 135,
-      rating: 4.6,
-      reviews: 180,
-      image:
-          'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=500&q=80',
-    ),
-    _Product(
-      name: 'Street Style',
-      price: 110,
-      rating: 4.9,
-      reviews: 275,
-      image:
-          'https://images.unsplash.com/photo-1552346154-21d32810aba3?w=500&q=80',
-    ),
-  ];
+  final Map<int, List<_Product>> _productsByCategory = const {
+    1: [
+      // Sneakers
+      _Product(
+        id: 'snk_1',
+        name: 'Running Shoes',
+        price: 145,
+        rating: 4.8,
+        reviews: 320,
+        image:
+            'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&q=80',
+      ),
+      _Product(
+        id: 'snk_2',
+        name: 'Classic Sneakers',
+        price: 99,
+        rating: 4.7,
+        reviews: 210,
+        image:
+            'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=500&q=80',
+      ),
+    ],
+    2: [
+      _Product(
+        id: 'spt_1',
+        name: 'Sports Footwear Pro',
+        price: 120,
+        rating: 4.9,
+        reviews: 450,
+        image:
+            'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80',
+      ),
+      _Product(
+        id: 'spt_2',
+        name: 'Trail Runners',
+        price: 135,
+        rating: 4.6,
+        reviews: 180,
+        image:
+            'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=500&q=80',
+      ),
+    ],
+    3: [
+      _Product(
+        id: 'frm_1',
+        name: 'Classic Leather Derby',
+        price: 180,
+        rating: 4.8,
+        reviews: 95,
+        image:
+            'https://images.unsplash.com/photo-1614252369475-531eba835eb1?w=500&q=80',
+      ),
+    ],
+    4: [
+      // Casual
+      _Product(
+        id: 'csl_1',
+        name: 'Street Style Casuals',
+        price: 110,
+        rating: 4.9,
+        reviews: 275,
+        image:
+            'https://images.unsplash.com/photo-1552346154-21d32810aba3?w=500&q=80',
+      ),
+      _Product(
+        id: 'csl_2',
+        name: 'Retro Canvas',
+        price: 85,
+        rating: 4.5,
+        reviews: 140,
+        image:
+            'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=500&q=80',
+      ),
+    ],
+    5: [
+      // Lifestyle
+      _Product(
+        id: 'lfs_1',
+        name: 'Urban Comfort',
+        price: 130,
+        rating: 4.7,
+        reviews: 190,
+        image:
+            'https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=500&q=80',
+      ),
+    ],
+  };
 
   @override
   void initState() {
@@ -130,11 +171,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currentProducts = _selectedCategory == 0
+        ? _productsByCategory.values.expand((list) => list).toList()
+        : _productsByCategory[_selectedCategory] ?? const [];
+
     return Scaffold(
       backgroundColor: kBackground,
       body: SafeArea(
         child: NotificationListener<ScrollNotification>(
-          // Pause auto-scroll briefly while user is manually dragging the banner
           onNotification: (notification) {
             if (notification is ScrollStartNotification &&
                 notification.metrics.axis == Axis.horizontal) {
@@ -165,14 +209,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     childAspectRatio: 0.66,
                   ),
                   delegate: SliverChildBuilderDelegate((context, index) {
+                    final product = currentProducts[index];
                     return _TiltCard(
                       scrollController: _scrollController,
-                      child: _ProductCard(
-                        product: _products[index],
-                        index: index,
-                      ),
+                      key: ValueKey(product.id),
+                      child: _ProductCard(product: product, index: index),
                     );
-                  }, childCount: _products.length),
+                  }, childCount: currentProducts.length),
                 ),
               ),
             ],
@@ -207,15 +250,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
               Text(
-                'George Grace',
+                'Melvin Cherian',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               ),
             ],
           ),
           const Spacer(),
-          _IconBubble(icon: Icons.favorite_border),
+          const _IconBubble(icon: Icons.favorite_border),
           const SizedBox(width: 8),
-          _IconBubble(icon: Icons.shopping_bag_outlined, badge: '2'),
+          const _IconBubble(icon: Icons.shopping_bag_outlined, badge: '2'),
         ],
       ),
     );
@@ -237,8 +280,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        child: Row(
-          children: const [
+        child: const Row(
+          children: [
             SizedBox(width: 14),
             Icon(Icons.search, color: Colors.grey, size: 22),
             SizedBox(width: 10),
@@ -285,19 +328,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       fit: StackFit.expand,
                       children: [
                         Image.asset(_banners[index], fit: BoxFit.cover),
-                        Container(
-                          decoration: BoxDecoration(
-                            // gradient: LinearGradient(
-                            //   colors: [
-                            //     Colors.black.withOpacity(0.55),
-                            //     Colors.transparent,
-                            //   ],
-                            //   begin: Alignment.centerLeft,
-                            //   end: Alignment.centerRight,
-                            //   stops: const [0.0, 0.75],
-                            // ),
-                          ),
-                        ),
+                        Container(decoration: const BoxDecoration()),
                       ],
                     ),
                   ),
@@ -411,11 +442,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildProductsHeader() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
+          const Text(
             'Popular Shoes',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
           ),
@@ -423,10 +454,10 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ListAllProduct()),
+                MaterialPageRoute(builder: (context) => const ListAllProduct()),
               );
             },
-            child: Text(
+            child: const Text(
               'See All',
               style: TextStyle(
                 fontSize: 12.5,
@@ -445,7 +476,11 @@ class _TiltCard extends StatefulWidget {
   final Widget child;
   final ScrollController scrollController;
 
-  const _TiltCard({required this.child, required this.scrollController});
+  const _TiltCard({
+    super.key,
+    required this.child,
+    required this.scrollController,
+  });
 
   @override
   State<_TiltCard> createState() => _TiltCardState();
@@ -469,6 +504,7 @@ class _TiltCardState extends State<_TiltCard> {
   }
 
   void _updateProgress() {
+    if (!mounted) return;
     final ctx = _key.currentContext;
     if (ctx == null) return;
     final box = ctx.findRenderObject() as RenderBox?;
@@ -498,7 +534,7 @@ class _TiltCardState extends State<_TiltCard> {
       child: Transform(
         alignment: Alignment.center,
         transform: Matrix4.identity()
-          ..setEntry(3, 2, 0.0012) // perspective
+          ..setEntry(3, 2, 0.0012)
           ..rotateX(angle)
           ..scale(scale, scale),
         child: Opacity(opacity: opacity, child: widget.child),
@@ -536,7 +572,6 @@ class _ProductCardState extends State<_ProductCard>
   void initState() {
     super.initState();
 
-    // Entrance: staggered pop/fade-in per card index.
     _entranceController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
@@ -549,7 +584,6 @@ class _ProductCardState extends State<_ProductCard>
       if (mounted) _entranceController.forward();
     });
 
-    // Giggle: a light, playful wiggle that plays every few seconds.
     _giggleController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
@@ -564,7 +598,6 @@ class _ProductCardState extends State<_ProductCard>
           CurvedAnimation(parent: _giggleController, curve: Curves.easeInOut),
         );
 
-    // Stagger the giggle start per card, then repeat periodically.
     Future.delayed(Duration(milliseconds: 400 + 300 * widget.index), () {
       if (!mounted) return;
       _giggleController.forward(from: 0);
@@ -637,17 +670,11 @@ class _ProductCardState extends State<_ProductCard>
           borderRadius: BorderRadius.circular(18),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
-            onTap: _openProductDetail,
+            onTap: () {
+              _giggleController.forward(from: 0);
+              _openProductDetail();
+            },
             child: Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.06),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
-              ),
               padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -655,41 +682,38 @@ class _ProductCardState extends State<_ProductCard>
                   Expanded(
                     child: Stack(
                       children: [
-                        Positioned.fill(
-                          child: GestureDetector(
-                            onTap: () => _giggleController.forward(from: 0),
-                            child: AnimatedBuilder(
-                              animation: _giggleAnim,
-                              builder: (context, child) {
-                                return Transform.rotate(
-                                  angle: _giggleAnim.value,
-                                  child: child,
-                                );
-                              },
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(14),
-                                child: Container(
-                                  color: kCardGrey,
-                                  child: Image.network(
-                                    product.image,
-                                    fit: BoxFit.cover,
-                                    loadingBuilder: (c, child, progress) =>
-                                        progress == null
-                                        ? child
-                                        : const Center(
-                                            child: SizedBox(
-                                              width: 22,
-                                              height: 22,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                              ),
-                                            ),
+                        AnimatedBuilder(
+                          animation: _giggleAnim,
+                          builder: (context, child) {
+                            return Transform.rotate(
+                              angle: _giggleAnim.value,
+                              child: child,
+                            );
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(14),
+                            child: Container(
+                              color: kCardGrey,
+                              width: double.infinity,
+                              height: double.infinity,
+                              child: Image.network(
+                                product.image,
+                                fit: BoxFit.cover,
+                                loadingBuilder: (c, child, progress) =>
+                                    progress == null
+                                    ? child
+                                    : const Center(
+                                        child: SizedBox(
+                                          width: 22,
+                                          height: 22,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
                                           ),
-                                    errorBuilder: (c, e, s) => const Icon(
-                                      Icons.image_not_supported,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
+                                        ),
+                                      ),
+                                errorBuilder: (c, e, s) => const Icon(
+                                  Icons.image_not_supported,
+                                  color: Colors.grey,
                                 ),
                               ),
                             ),
@@ -727,6 +751,8 @@ class _ProductCardState extends State<_ProductCard>
                   const SizedBox(height: 8),
                   Text(
                     product.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -892,12 +918,14 @@ class _Category {
 }
 
 class _Product {
+  final String id;
   final String name;
   final int price;
   final double rating;
   final int reviews;
   final String image;
   const _Product({
+    required this.id,
     required this.name,
     required this.price,
     required this.rating,

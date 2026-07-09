@@ -55,7 +55,6 @@ class _NavbarScreenState extends State<NavbarScreen> {
       ),
       bottomNavigationBar: CurvedNavigationBarPro(
         currentIndex: _pageIndex,
-        // CHANGED: List<Widget> replaced with List<CurvedNavigationItemPro>
         items: const [
           CurvedNavigationItemPro(
             inactiveIcon: Icons.home_outlined,
@@ -71,8 +70,7 @@ class _NavbarScreenState extends State<NavbarScreen> {
             inactiveIcon: Icons.favorite_outline,
             activeIcon: Icons.favorite_rounded,
             label: 'Favorites',
-            badgeText:
-                '3', // Bonus feature: Add an explicit alert badge if you're feeling fancy!
+            badgeText: '3',
           ),
           CurvedNavigationItemPro(
             inactiveIcon: Icons.person_outline,

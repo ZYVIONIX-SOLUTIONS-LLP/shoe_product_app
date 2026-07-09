@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shoe_product/views/home/home_screen.dart';
 
 import 'package:flutter/services.dart';
+import 'package:shoe_product/views/splash/splash_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,7 +14,7 @@ void main() {
           msg.contains('PigeonInternalInstanceManager') ||
           msg.contains('webview_flutter_android') ||
           msg.contains('WebView.')) {
-        return; // Ignore
+        return;
       }
     }
     final errStr = exception.toString();
@@ -26,7 +26,6 @@ void main() {
     FlutterError.presentError(details);
   };
 
-  // Silence asynchronous platform errors from webview pigeon channels
   WidgetsBinding.instance.platformDispatcher.onError = (error, stack) {
     if (error is PlatformException) {
       final msg = error.message ?? '';
@@ -37,7 +36,7 @@ void main() {
         debugPrint(
           'Silenced WebView Pigeon hot-restart platform channel exception.',
         );
-        return true; // Silenced
+        return true;
       }
     }
     final errStr = error.toString();
@@ -47,7 +46,7 @@ void main() {
       debugPrint(
         'Silenced WebView Pigeon hot-restart platform channel exception.',
       );
-      return true; // Silenced
+      return true;
     }
     return false;
   };
@@ -65,7 +64,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const HomeScreen(),
+      home: const SplashScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
