@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
-import 'package:shoe_product/views/home/home_screen.dart';
+import 'package:shoe_product/views/auth/login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -27,7 +27,6 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
-    // Arrow sliding-up animation (1.6 seconds loop)
     _arrowsController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1600),
@@ -49,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen>
         Navigator.of(context).pushReplacement(
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
-                const HomeScreen(),
+                const LoginScreen(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
                   return FadeTransition(opacity: animation, child: child);

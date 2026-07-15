@@ -22,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedCategory = 0;
   Timer? _bannerTimer;
 
+  // Top hero banner keeps using the original local asset images.
   final List<String> _banners = const [
     'assets/banner.png',
     'assets/bannerimage.png',
@@ -55,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   ];
 
+  // Map keys now align with category indexes (1 = Sneakers, 2 = Sports, etc.)
   final Map<int, List<_Product>> _productsByCategory = const {
     1: [
       // Sneakers
@@ -78,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     ],
     2: [
+      // Sports
       _Product(
         id: 'spt_1',
         name: 'Sports Footwear Pro',
@@ -98,6 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     ],
     3: [
+      // Formal
       _Product(
         id: 'frm_1',
         name: 'Classic Leather Derby',
@@ -143,6 +147,34 @@ class _HomeScreenState extends State<HomeScreen> {
     ],
   };
 
+  // Ad banners now use network images instead of local assets.
+  final List<_AdBanner> _adBanners = const [
+    _AdBanner(
+      image:
+          'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&q=80',
+      title: 'BLACK FRIDAY\nSALE -50%',
+      subtitle: 'On all sneakers this week',
+      buttonText: 'Shop Now',
+      background: Color(0xFFE8432F),
+    ),
+    _AdBanner(
+      image:
+          'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400&q=80',
+      title: 'NEW ARRIVALS\nUP TO 30% OFF',
+      subtitle: 'Fresh kicks just dropped',
+      buttonText: 'Shop Now',
+      background: Color(0xFF1F2937),
+    ),
+    _AdBanner(
+      image:
+          'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80',
+      title: 'FREE SHIPPING\nON ORDERS \$99+',
+      subtitle: 'Limited time offer',
+      buttonText: 'Shop Now',
+      background: Color(0xFFFF5A1F),
+    ),
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -171,6 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Logic: If index is 0 ('All'), gather and flatten all map lists into one big list
     final currentProducts = _selectedCategory == 0
         ? _productsByCategory.values.expand((list) => list).toList()
         : _productsByCategory[_selectedCategory] ?? const [];
@@ -194,30 +227,11 @@ class _HomeScreenState extends State<HomeScreen> {
             controller: _scrollController,
             slivers: [
               SliverToBoxAdapter(child: _buildHeader()),
-              SliverToBoxAdapter(child: _buildSearchBar()),
               SliverToBoxAdapter(child: _buildBanner()),
               SliverToBoxAdapter(child: _buildSectionTitle()),
               SliverToBoxAdapter(child: _buildCategories()),
               SliverToBoxAdapter(child: _buildProductsHeader()),
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-                sliver: SliverGrid(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 14,
-                    childAspectRatio: 0.66,
-                  ),
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    final product = currentProducts[index];
-                    return _TiltCard(
-                      scrollController: _scrollController,
-                      key: ValueKey(product.id),
-                      child: _ProductCard(product: product, index: index),
-                    );
-                  }, childCount: currentProducts.length),
-                ),
-              ),
+              ..._buildProductSlivers(currentProducts),
             ],
           ),
         ),
@@ -256,44 +270,14 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           const Spacer(),
+          // Search icon now sits to the left of the wishlist icon,
+          // replacing the old dedicated search bar.
+          const _IconBubble(icon: Icons.search),
+          const SizedBox(width: 8),
           const _IconBubble(icon: Icons.favorite_border),
           const SizedBox(width: 8),
           const _IconBubble(icon: Icons.shopping_bag_outlined, badge: '2'),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSearchBar() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 4),
-      child: Container(
-        height: 46,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: const Row(
-          children: [
-            SizedBox(width: 14),
-            Icon(Icons.search, color: Colors.grey, size: 22),
-            SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                'Search...',
-                style: TextStyle(color: Colors.grey, fontSize: 14),
-              ),
-            ),
-            SizedBox(width: 8),
-          ],
-        ),
       ),
     );
   }
@@ -469,6 +453,63 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+  }
+
+  /// Builds the product grid as a series of slivers, inserting an
+  /// auto-scrolling ad banner after every group of 4 product cards.
+  List<Widget> _buildProductSlivers(List<_Product> products) {
+    final List<Widget> slivers = [];
+    int i = 0;
+    int adSeed = 0;
+
+    while (i < products.length) {
+      final chunk = products.skip(i).take(4).toList();
+
+      slivers.add(
+        SliverPadding(
+          padding: EdgeInsets.fromLTRB(16, i == 0 ? 8 : 0, 16, 8),
+          sliver: SliverGrid(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 14,
+              childAspectRatio: 0.66,
+            ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final product = chunk[index];
+              final globalIndex = i + index;
+              return _TiltCard(
+                scrollController: _scrollController,
+                key: ValueKey(product.id),
+                child: _ProductCard(product: product, index: globalIndex),
+              );
+            }, childCount: chunk.length),
+          ),
+        ),
+      );
+
+      i += chunk.length;
+
+      // Only insert the ad after a *full* group of 4 cards.
+      if (chunk.length == 4) {
+        slivers.add(
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: _AdBannerCarousel(
+                key: ValueKey('grid_ad_$adSeed'),
+                ads: _adBanners,
+                height: 140,
+              ),
+            ),
+          ),
+        );
+        adSeed++;
+      }
+    }
+
+    slivers.add(const SliverToBoxAdapter(child: SizedBox(height: 16)));
+    return slivers;
   }
 }
 
@@ -907,6 +948,203 @@ class _AvatarPlaceholder extends StatelessWidget {
       height: 44,
       decoration: const BoxDecoration(color: kCardGrey, shape: BoxShape.circle),
       child: const Icon(Icons.person, color: Colors.grey),
+    );
+  }
+}
+
+class _AdBanner {
+  final String image;
+  final String title;
+  final String subtitle;
+  final String buttonText;
+  final Color background;
+  const _AdBanner({
+    required this.image,
+    required this.title,
+    required this.subtitle,
+    required this.buttonText,
+    required this.background,
+  });
+}
+
+class _AdBannerCarousel extends StatefulWidget {
+  final List<_AdBanner> ads;
+  final double height;
+  const _AdBannerCarousel({super.key, required this.ads, this.height = 150});
+
+  @override
+  State<_AdBannerCarousel> createState() => _AdBannerCarouselState();
+}
+
+class _AdBannerCarouselState extends State<_AdBannerCarousel> {
+  late final PageController _controller;
+  int _index = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = PageController();
+    _startAutoScroll();
+  }
+
+  void _startAutoScroll() {
+    _timer?.cancel();
+    if (widget.ads.length <= 1) return;
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (!_controller.hasClients) return;
+      final nextPage = (_index + 1) % widget.ads.length;
+      _controller.animateToPage(
+        nextPage,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeInOutCubic,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          height: widget.height,
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (notification) {
+              if (notification is ScrollStartNotification) {
+                _timer?.cancel();
+              } else if (notification is ScrollEndNotification) {
+                _startAutoScroll();
+              }
+              return true;
+            },
+            child: PageView.builder(
+              controller: _controller,
+              itemCount: widget.ads.length,
+              onPageChanged: (i) => setState(() => _index = i),
+              itemBuilder: (context, index) {
+                return AnimatedBuilder(
+                  animation: _controller,
+                  builder: (context, child) {
+                    double scale = 1.0;
+                    if (_controller.position.haveDimensions) {
+                      double page = _controller.page ?? _index.toDouble();
+                      double diff = (page - index).abs();
+                      scale = (1 - (diff * 0.08)).clamp(0.9, 1.0);
+                    }
+                    return Transform.scale(scale: scale, child: child);
+                  },
+                  child: _AdBannerCard(ad: widget.ads[index]),
+                );
+              },
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(widget.ads.length, (i) {
+            final active = i == _index;
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              width: active ? 18 : 6,
+              height: 6,
+              decoration: BoxDecoration(
+                color: active ? kPrimaryOrange : Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            );
+          }),
+        ),
+      ],
+    );
+  }
+}
+
+class _AdBannerCard extends StatelessWidget {
+  final _AdBanner ad;
+  const _AdBannerCard({required this.ad});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        color: ad.background,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned(
+              right: -10,
+              bottom: -10,
+              width: 170,
+              child: Image.network(
+                ad.image,
+                fit: BoxFit.contain,
+                loadingBuilder: (c, child, progress) =>
+                    progress == null ? child : const SizedBox(),
+                errorBuilder: (c, e, s) => const SizedBox(),
+              ),
+            ),
+            Positioned(
+              left: 20,
+              top: 20,
+              right: 140,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    ad.title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      height: 1.2,
+                    ),
+                  ),
+                  if (ad.subtitle.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      ad.subtitle,
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 7,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      ad.buttonText,
+                      style: const TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

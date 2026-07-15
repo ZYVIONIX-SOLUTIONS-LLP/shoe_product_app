@@ -30,11 +30,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   String _getCameraOrbit() {
     switch (_selectedThumb) {
       case 1:
-        return "180deg 75deg 105%"; // Back perspective
+        return "180deg 75deg 105%";
       case 2:
-        return "0deg 165deg 105%"; // Sole perspective
+        return "0deg 165deg 105%";
       case 3:
-        return "0deg 15deg 105%"; // Top/Upper perspective
+        return "0deg 15deg 105%";
       case 0:
       default:
         return "0deg 75deg 105%";
@@ -43,9 +43,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const bg = Color(0xFFF6F7FB);
+    const bg = Color(0xFFF7F7FA);
     const ink = Color(0xFF17181C);
-    const accent = Color(0xFF1FAA59);
+    const accent = Color(0xFFFF5A1F);
 
     return Scaffold(
       backgroundColor: bg,
@@ -352,7 +352,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Widget _buildActions(Color accent, Color ink) {
     return Row(
       children: [
-        // _circleIconButton(Icons.chat_bubble_outline_rounded, () {}, ink),
         const SizedBox(width: 12),
         Expanded(
           child: OutlinedButton.icon(
@@ -430,7 +429,7 @@ class _ShoeThumb extends StatelessWidget {
       errorBuilder: (context, error, stack) => const Icon(
         Icons.directions_run_rounded,
         size: 22,
-        color: Color(0xFF1FAA59),
+        color: Color(0xFFFF5A1F),
       ),
     );
   }
