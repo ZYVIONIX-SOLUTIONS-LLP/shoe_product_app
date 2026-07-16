@@ -13,53 +13,51 @@ class _ListAllProductState extends State<ListAllProduct> {
   final List<Map<String, dynamic>> _allProducts = [
     {
       'image':
-          'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=600&auto=format&fit=crop',
-      'title': 'Knit Midi Dress',
-      'brand': 'Apparel',
+          'https://images.unsplash.com/photo-1608231387042-66d1773070a5?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHNob2VzfGVufDB8fDB8fHww',
+      'title': 'Puma Velocity Running Shoes',
+      'brand': 'Puma',
       'price': 7800000,
       'rating': 4.8,
     },
     {
       'image':
-          'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600&auto=format&fit=crop',
-      'title': 'Geometric Bag',
-      'brand': 'Bags',
+          'https://media.istockphoto.com/id/523113015/photo/mens-brown-shoes.jpg?s=612x612&w=0&k=20&c=3DL6Hz1Is_XaARpwTopjL_uVJFeXu0BWePYM0WT9GW0=',
+      'title': 'Classic Brown Leather Oxford Shoes',
+      'brand': 'Clarks',
       'price': 27900000,
       'rating': 4.7,
     },
     {
       'image':
           'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=600&auto=format&fit=crop',
-      'title': 'Leather Sneakers',
-      'brand': 'Shoes',
+      'title': 'Nike Air Casual Sneakers',
+      'brand': 'Nike',
       'price': 11000000,
       'rating': 4.9,
     },
     {
       'image':
-          'https://images.unsplash.com/photo-1544923246-77307dd654cb?q=80&w=600&auto=format&fit=crop',
-      'title': 'Hooded Jacket',
-      'brand': 'Apparel',
+          'https://img.magnific.com/premium-photo/sports-shoes-floating-isolated-white-background_650680-4516.jpg?semt=ais_hybrid&w=740&q=80',
+      'title': 'Adidas Performance Sports Shoes',
+      'brand': 'Adidas',
       'price': 5100000,
       'rating': 4.6,
     },
-
     {
       'image':
-          'https://images.unsplash.com/photo-1544923246-77307dd654cb?q=80&w=600&auto=format&fit=crop',
-      'title': 'Hooded Jacket',
-      'brand': 'Apparel',
-      'price': 5100000,
-      'rating': 4.6,
+          'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600&auto=format&fit=crop',
+      'title': 'Nike Revolution Running Shoes',
+      'brand': 'Nike',
+      'price': 6500000,
+      'rating': 4.8,
     },
-
     {
       'image':
-          'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600&auto=format&fit=crop',
-      'title': 'Geometric Bag',
-      'brand': 'Bags',
-      'price': 27900000,
-      'rating': 4.7,
+          'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=600&auto=format&fit=crop',
+      'title': 'Adidas Ultraboost Shoes',
+      'brand': 'Adidas',
+      'price': 8900000,
+      'rating': 4.9,
     },
   ];
 
@@ -319,7 +317,6 @@ class _ListAllProductState extends State<ListAllProduct> {
         ),
         const SizedBox(height: 8),
 
-        // Price metadata + Star Rating Row
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

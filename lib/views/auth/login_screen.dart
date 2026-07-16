@@ -10,15 +10,12 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // Focus nodes
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
 
-  // Text controllers
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  // Rive controllers and state machine inputs
   StateMachineController? _stateMachineController;
   SMIInput<bool>? _isChecking;
   SMIInput<double>? _numLook;
@@ -33,11 +30,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
 
-    // Listeners for focus node changes
     _emailFocusNode.addListener(_onEmailFocusChange);
     _passwordFocusNode.addListener(_onPasswordFocusChange);
 
-    // Listeners for text input changes
     _emailController.addListener(_onEmailTextChange);
   }
 
@@ -55,7 +50,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _onEmailTextChange() {
     if (_numLook != null) {
-      // Scale double between 0.0 and 100.0 based on length of typed characters
       _numLook!.value = _emailController.text.length.toDouble() * 2.0;
     }
   }
@@ -63,19 +57,21 @@ class _LoginScreenState extends State<LoginScreen> {
   void _onRiveInit(Artboard artboard) {
     _stateMachineController = StateMachineController.fromArtboard(
       artboard,
-      'Login Machine', // Name of the state machine inside this Rive file
+      'Login Machine',
     );
 
     if (_stateMachineController != null) {
       artboard.addController(_stateMachineController!);
-      
-      // Bind inputs
+
       _isChecking = _stateMachineController!.findInput<bool>('isChecking');
       _numLook = _stateMachineController!.findInput<double>('numLook');
       _isHandsUp = _stateMachineController!.findInput<bool>('isHandsUp');
-      
-      _trigSuccess = _stateMachineController!.findInput<bool>('trigSuccess') as SMITrigger?;
-      _trigFail = _stateMachineController!.findInput<bool>('trigFail') as SMITrigger?;
+
+      _trigSuccess =
+          _stateMachineController!.findInput<bool>('trigSuccess')
+              as SMITrigger?;
+      _trigFail =
+          _stateMachineController!.findInput<bool>('trigFail') as SMITrigger?;
     }
   }
 
@@ -98,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (email.isNotEmpty && password.length >= 6) {
         // SUCCESS
         _trigSuccess?.fire();
-        
+
         Future.delayed(const Duration(milliseconds: 1000), () {
           if (!mounted) return;
           setState(() {
@@ -109,9 +105,10 @@ class _LoginScreenState extends State<LoginScreen> {
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) =>
                   const HomeScreen(),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return FadeTransition(opacity: animation, child: child);
-              },
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
               transitionDuration: const Duration(milliseconds: 600),
             ),
           );
@@ -119,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         // FAILURE
         _trigFail?.fire();
-        
+
         setState(() {
           _isLoading = false;
         });
@@ -127,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             backgroundColor: Colors.redAccent,
-            content: Text('Invalid credentials. Password must be at least 6 characters.'),
+            content: Text('Please Enter User name and Password.'),
           ),
         );
       }
@@ -144,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordFocusNode.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    
+
     super.dispose();
   }
 
@@ -157,22 +154,18 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: bg,
       body: Stack(
         children: [
-          // Smooth radial background glow matching onboarding
           Positioned.fill(
             child: Container(
               decoration: const BoxDecoration(
                 gradient: RadialGradient(
                   center: Alignment(0.0, 1.2),
                   radius: 1.3,
-                  colors: [
-                    Color(0x2DFF5A1F), // Soft orange/red glow
-                    Colors.transparent,
-                  ],
+                  colors: [Color(0x2DFF5A1F), Colors.transparent],
                 ),
               ),
             ),
           ),
-          
+
           SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) {
@@ -187,8 +180,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           const SizedBox(height: 20),
-                          
-                          // Header title
+
                           const Text(
                             'Welcome Back',
                             textAlign: TextAlign.center,
@@ -208,8 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               fontSize: 14,
                             ),
                           ),
-                          
-                          // Rive animated character container
+
                           SizedBox(
                             height: height * 0.35,
                             child: RiveAnimation.network(
@@ -218,8 +209,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               onInit: _onRiveInit,
                             ),
                           ),
-                          
-                          // Glassmorphic Input form
+
                           Container(
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
@@ -280,7 +270,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 20),
-                                
+
                                 // Password input
                                 Text(
                                   'PASSWORD',
@@ -320,7 +310,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                       onPressed: () {
                                         setState(() {
-                                          _isPasswordVisible = !_isPasswordVisible;
+                                          _isPasswordVisible =
+                                              !_isPasswordVisible;
                                         });
                                       },
                                     ),
@@ -345,10 +336,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               ],
                             ),
                           ),
-                          
+
                           const Spacer(),
                           const SizedBox(height: 24),
-                          
+
                           // Submit button
                           ElevatedButton(
                             onPressed: _isLoading ? null : _submitLogin,
@@ -382,31 +373,31 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                           ),
                           const SizedBox(height: 16),
-                          
+
                           // Bottom Sign up hint
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Don't have an account? ",
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.6),
-                                  fontSize: 13,
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {},
-                                child: const Text(
-                                  'Sign Up',
-                                  style: TextStyle(
-                                    color: accent,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.center,
+                          //   children: [
+                          //     Text(
+                          //       "Don't have an account? ",
+                          //       style: TextStyle(
+                          //         color: Colors.white.withOpacity(0.6),
+                          //         fontSize: 13,
+                          //       ),
+                          //     ),
+                          //     GestureDetector(
+                          //       onTap: () {},
+                          //       child: const Text(
+                          //         'Sign Up',
+                          //         style: TextStyle(
+                          //           color: accent,
+                          //           fontWeight: FontWeight.bold,
+                          //           fontSize: 13,
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
                           const SizedBox(height: 20),
                         ],
                       ),
