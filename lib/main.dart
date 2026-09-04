@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter/services.dart';
 import 'package:shoe_product/views/splash/splash_screen.dart';
 
@@ -21,7 +20,7 @@ void main() {
     if (errStr.contains('PigeonInternalInstanceManager') ||
         errStr.contains('webview_flutter_android') ||
         errStr.contains('WebView.')) {
-      return; // Ignore
+      return;
     }
     FlutterError.presentError(details);
   };
@@ -40,7 +39,7 @@ void main() {
       }
     }
     final errStr = error.toString();
-    if (errStr.contains('PigeonInternalInstanceManager') ||
+    if (errStr.contains('PigeonInternalInstanceManage r') ||
         errStr.contains('webview_flutter_android') ||
         errStr.contains('WebView.')) {
       debugPrint(

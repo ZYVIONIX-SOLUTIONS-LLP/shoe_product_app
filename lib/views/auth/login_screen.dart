@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart' hide RadialGradient, LinearGradient;
 import 'package:shoe_product/views/home/home_screen.dart';
@@ -76,23 +78,19 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _submitLogin() {
-    // Hide keyboard
     FocusScope.of(context).unfocus();
 
     setState(() {
       _isLoading = true;
     });
 
-    // Simulate standard mock authentication check
     Future.delayed(const Duration(milliseconds: 1500), () {
       if (!mounted) return;
 
       final email = _emailController.text.trim();
       final password = _passwordController.text;
 
-      // Simple mock validation rules
       if (email.isNotEmpty && password.length >= 6) {
-        // SUCCESS
         _trigSuccess?.fire();
 
         Future.delayed(const Duration(milliseconds: 1000), () {
@@ -100,7 +98,6 @@ class _LoginScreenState extends State<LoginScreen> {
           setState(() {
             _isLoading = false;
           });
-          // Navigate to HomeScreen (fade transition)
           Navigator.of(context).pushReplacement(
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) =>
@@ -114,7 +111,6 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         });
       } else {
-        // FAILURE
         _trigFail?.fire();
 
         setState(() {
@@ -340,7 +336,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           const Spacer(),
                           const SizedBox(height: 24),
 
-                          // Submit button
                           ElevatedButton(
                             onPressed: _isLoading ? null : _submitLogin,
                             style: ElevatedButton.styleFrom(
